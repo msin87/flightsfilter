@@ -1,4 +1,4 @@
-package com.gridnine.testing.db;
+package com.gridline.testing.db;
 
 import com.gridline.testing.domain.Flight;
 
