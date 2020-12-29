@@ -112,7 +112,12 @@ public class FlightFilter implements Filter<List<Flight>> {
         return filteredList;
     }
 
-    private List<Flight> iddleFlightsFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
+    /**
+     * todo: parallelStream
+     * cause: не хватило времени на продумывание параллельного алгоритма.
+     * Возможно решение лежит в области Thread'ов
+     */
+    private List<Flight> idleFlightsFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
         List<Flight> filteredList = new LinkedList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {
             long toleranceSeconds = conditions.getValue();
@@ -149,7 +154,7 @@ public class FlightFilter implements Filter<List<Flight>> {
     }
 
     private List<Flight> invalidFlightsFilter(List<Flight> flightList) {
-        return flightList.stream().filter(flight -> flight.getSegments().stream().noneMatch(this::isInvalidSegment)).collect(Collectors.toList());
+        return flightList.parallelStream().filter(flight -> flight.getSegments().stream().noneMatch(this::isInvalidSegment)).collect(Collectors.toList());
     }
 
     @Override
@@ -160,7 +165,7 @@ public class FlightFilter implements Filter<List<Flight>> {
         if (!departureStatementsMap.isEmpty())
             filteredFlights = conditionalFilter(filteredFlights, departureStatementsMap, FlightFilterType.DEPARTURE);
         if (!idleStatementsMap.isEmpty())
-            filteredFlights = iddleFlightsFilter(filteredFlights, idleStatementsMap);
+            filteredFlights = idleFlightsFilter(filteredFlights, idleStatementsMap);
         if ((arrivalStatementsMap.isEmpty() && departureStatementsMap.isEmpty() && idleStatementsMap.isEmpty()) || !allowInvalidFlights)
             filteredFlights = invalidFlightsFilter(filteredFlights);
         return filteredFlights;
