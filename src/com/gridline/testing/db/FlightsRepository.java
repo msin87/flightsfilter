@@ -1,6 +1,6 @@
 package com.gridline.testing.db;
 
-import com.gridline.testing.domain.Flight;
+import com.gridline.testing.models.Flight;
 import com.gridline.testing.utils.FlightBuilder;
 
 import java.util.List;

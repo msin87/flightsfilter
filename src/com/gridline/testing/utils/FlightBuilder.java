@@ -1,7 +1,7 @@
 package com.gridline.testing.utils;
 
-import com.gridline.testing.domain.Flight;
-import com.gridline.testing.domain.Segment;
+import com.gridline.testing.models.Flight;
+import com.gridline.testing.models.Segment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

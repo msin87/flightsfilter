@@ -1,6 +1,6 @@
 package com.gridline.testing.utils;
 
-public enum SegmentFilterType {
-    ARRIVE,
+public enum FlightFilterType {
+    ARRIVAL,
     DEPARTURE
 }

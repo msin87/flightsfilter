@@ -1,4 +1,4 @@
-package com.gridline.testing.domain;
+package com.gridline.testing.models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

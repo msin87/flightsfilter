@@ -1,4 +1,4 @@
-package com.gridline.testing.domain;
+package com.gridline.testing.models;
 
 import java.util.List;
 import java.util.stream.Collectors;
