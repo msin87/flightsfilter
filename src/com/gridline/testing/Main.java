@@ -2,8 +2,8 @@ package com.gridline.testing;
 
 import com.gridline.testing.db.FlightsDao;
 import com.gridline.testing.db.FlightsRepository;
-import com.gridline.testing.models.Flight;
 import com.gridline.testing.filter.FlightFilter;
+import com.gridline.testing.models.Flight;
 import com.gridline.testing.utils.FlightFilterBuilder;
 
 import java.time.LocalDateTime;
