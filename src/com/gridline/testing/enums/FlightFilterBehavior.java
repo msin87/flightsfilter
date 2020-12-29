@@ -1,4 +1,4 @@
-package com.gridline.testing.utils;
+package com.gridline.testing.enums;
 
 public enum FlightFilterBehavior {
     GET_ONLY_FILTERED_SEGMENTS,

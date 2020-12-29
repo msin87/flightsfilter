@@ -1,4 +1,4 @@
-package com.gridline.testing.utils;
+package com.gridline.testing.enums;
 
 public enum FlightFilterType {
     ARRIVAL,

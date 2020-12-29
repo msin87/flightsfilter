@@ -1,11 +1,11 @@
 package com.gridline.testing.filter;
 
+import com.gridline.testing.enums.FilterOperator;
+import com.gridline.testing.enums.FlightFilterBehavior;
+import com.gridline.testing.enums.FlightFilterType;
+import com.gridline.testing.interfaces.Filter;
 import com.gridline.testing.models.Flight;
 import com.gridline.testing.models.Segment;
-import com.gridline.testing.interfaces.Filter;
-import com.gridline.testing.utils.FilterOperator;
-import com.gridline.testing.utils.FlightFilterBehavior;
-import com.gridline.testing.utils.FlightFilterType;
 
 import java.time.ZoneOffset;
 import java.util.*;
@@ -53,12 +53,14 @@ public class FlightFilter implements Filter<List<Flight>> {
                 return false;
         }
     }
-    private boolean isInvalidSegment(Segment segment){
+
+    private boolean isInvalidSegment(Segment segment) {
         if (!allowInvalidFlights) {
             return segment.getArrivalDate().toEpochSecond(ZoneOffset.UTC) < segment.getDepartureDate().toEpochSecond(ZoneOffset.UTC);
         }
         return false;
     }
+
     private boolean isPassedSegment(Segment segment, Long epochTimeToCompare, FilterOperator filterOperator, FlightFilterType filterType) {
         if (isInvalidSegment(segment))
             return false;
@@ -82,7 +84,7 @@ public class FlightFilter implements Filter<List<Flight>> {
         }
     }
 
-    private List<Flight> conditionalFilter(final List<Flight> flightList, Map<FilterOperator, Long> conditionMap, FlightFilterType flightFilterType) {
+    private List<Flight> conditionalFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap, FlightFilterType flightFilterType) {
         List<Flight> filteredList = new ArrayList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {
             Stream<Flight> flightsStream = filteredList.parallelStream();
@@ -110,7 +112,7 @@ public class FlightFilter implements Filter<List<Flight>> {
         return filteredList;
     }
 
-    private List<Flight> iddleFlightsFilter(final List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
+    private List<Flight> iddleFlightsFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
         List<Flight> filteredList = new LinkedList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {
             long toleranceSeconds = conditions.getValue();
@@ -124,11 +126,11 @@ public class FlightFilter implements Filter<List<Flight>> {
                     filteredList.remove(flightList.get(i));
                     continue;
                 }
-                if (!allowInvalidFlights){
+                if (!allowInvalidFlights) {
                     for (Segment segment : flight.getSegments()) {
                         if (isInvalidSegment(segment))
                             filteredList.remove(flightList.get(i));
-                            continue flightLoop;
+                        continue flightLoop;
                     }
                 }
                 for (int nextSegmentIndex = 1; nextSegmentIndex <= (segmentList.size() - 1); nextSegmentIndex++) {
@@ -145,9 +147,11 @@ public class FlightFilter implements Filter<List<Flight>> {
         }
         return filteredList;
     }
-    private List<Flight> invalidFlightsFilter(List<Flight> flightList){
+
+    private List<Flight> invalidFlightsFilter(List<Flight> flightList) {
         return flightList.stream().filter(flight -> flight.getSegments().stream().noneMatch(this::isInvalidSegment)).collect(Collectors.toList());
     }
+
     @Override
     public List<Flight> filtrate(final List<Flight> flightList) {
         List<Flight> filteredFlights = new ArrayList<>(flightList);
@@ -157,7 +161,7 @@ public class FlightFilter implements Filter<List<Flight>> {
             filteredFlights = conditionalFilter(filteredFlights, departureStatementsMap, FlightFilterType.DEPARTURE);
         if (!idleStatementsMap.isEmpty())
             filteredFlights = iddleFlightsFilter(filteredFlights, idleStatementsMap);
-        if ((arrivalStatementsMap.isEmpty()&&departureStatementsMap.isEmpty()&&idleStatementsMap.isEmpty()) || !allowInvalidFlights)
+        if ((arrivalStatementsMap.isEmpty() && departureStatementsMap.isEmpty() && idleStatementsMap.isEmpty()) || !allowInvalidFlights)
             filteredFlights = invalidFlightsFilter(filteredFlights);
         return filteredFlights;
     }

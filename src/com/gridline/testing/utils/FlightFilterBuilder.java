@@ -1,5 +1,7 @@
 package com.gridline.testing.utils;
 
+import com.gridline.testing.enums.FilterOperator;
+import com.gridline.testing.enums.FlightFilterBehavior;
 import com.gridline.testing.filter.FlightFilter;
 
 import java.util.EnumMap;
@@ -64,6 +66,7 @@ public class FlightFilterBuilder {
         targetStatementsMap = arrivalStatementsMap;
         return this;
     }
+
     public FlightFilterBuilder departure() {
         targetStatementsMap = departureStatementsMap;
         return this;
