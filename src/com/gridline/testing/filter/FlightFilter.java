@@ -158,6 +158,7 @@ public class FlightFilter implements Filter<List<Flight>> {
             filteredFlights = idleFlightsFilter(filteredFlights, idleStatementsMap);
         if ((arrivalStatementsMap.isEmpty() && departureStatementsMap.isEmpty() && idleStatementsMap.isEmpty()) || !allowInvalidFlights)
             filteredFlights = invalidFlightsFilter(filteredFlights);
+        invalidFlightsRemoved=false;
         return filteredFlights;
     }
 }
