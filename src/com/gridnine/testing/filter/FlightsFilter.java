@@ -7,9 +7,7 @@ import com.gridnine.testing.models.Flight;
 import com.gridnine.testing.models.Segment;
 
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
