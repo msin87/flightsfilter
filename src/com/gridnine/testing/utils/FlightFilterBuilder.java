@@ -13,13 +13,6 @@ public class FlightFilterBuilder {
     private Map<FilterOperator, Long> targetStatementsMap;
     private boolean allowInvalidFlights = true;
 
-    public static long hoursToSeconds(int hours) {
-        return hours * 60 * 60L;
-    }
-
-    public FlightFilterBuilder() {
-    }
-
     public FlightFilter eq(Long epochTime) {
         targetStatementsMap.put(FilterOperator.EQ, epochTime);
         return new FlightFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights);

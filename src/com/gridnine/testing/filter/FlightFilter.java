@@ -123,11 +123,6 @@ public class FlightFilter implements Filter<List<Flight>> {
         return filteredList;
     }
 
-    /**
-     * todo: parallelStream
-     * cause: не хватило времени на продумывание параллельного алгоритма.
-     * Возможно решение лежит в области Thread'ов
-     */
     private List<Flight> idleFlightsFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
         List<Flight> filteredList = new LinkedList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {

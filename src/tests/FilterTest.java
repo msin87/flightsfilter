@@ -7,6 +7,7 @@ import com.gridnine.testing.db.FlightsRepository;
 import com.gridnine.testing.utils.FlightFilterBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -99,15 +100,15 @@ public class FilterTest {
 
     @Test
     public void idleFilterTest() {
-        long gteHours = FlightFilterBuilder.hoursToSeconds(2);
+        long gteHours = Duration.ofHours(2).toSeconds();
         FlightFilter flightFilter = new FlightFilterBuilder().idle().gte(gteHours).build();
         List<Flight> filteredFlights = flightFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(4));
         assertEquals(filteredFlights.get(1), flightList.get(5));
         System.out.println("combineArriveDepartureFilterTest gte=2: " + filteredFlights);
 
-        gteHours = FlightFilterBuilder.hoursToSeconds(1);
-        long ltHours = FlightFilterBuilder.hoursToSeconds(3);
+        gteHours = Duration.ofHours(1).toSeconds();
+        long ltHours = Duration.ofHours(3).toSeconds();
         flightFilter = new FlightFilterBuilder().idle().gt(gteHours).lt(ltHours).build();
         filteredFlights = flightFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(5));
@@ -116,10 +117,10 @@ public class FilterTest {
 
     @Test
     public void combineArriveDepartureTest() {
-        long iddleGteTime = FlightFilterBuilder.hoursToSeconds(2);
+        long iddleGteTime = Duration.ofHours(2).toSeconds();
         FlightFilter flightFilter = new FlightFilterBuilder()
-                .departure().gte(threeDaysFromNowTime + FlightFilterBuilder.hoursToSeconds(2)).lt(threeDaysFromNowTime + FlightFilterBuilder.hoursToSeconds(6))
-                .arrival().gt(threeDaysFromNowTime + FlightFilterBuilder.hoursToSeconds(4))
+                .departure().gte(threeDaysFromNowTime + Duration.ofHours(2).toSeconds()).lt(threeDaysFromNowTime + Duration.ofHours(6).toSeconds())
+                .arrival().gt(threeDaysFromNowTime + Duration.ofHours(4).toSeconds())
                 .idle().gte(iddleGteTime)
                 .build();
         List<Flight> filteredFlights = flightFilter.filtrate(flightList);
