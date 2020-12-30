@@ -7,9 +7,11 @@ import com.gridline.testing.models.Flight;
 import com.gridline.testing.models.Segment;
 
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FlightFilter implements Filter<List<Flight>> {
