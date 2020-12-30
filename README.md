@@ -8,7 +8,9 @@ FlightsFilter flightsFilter = new FlightsFilterBuilder()
     .removeInvalidFlights()
     .doParallel()
     .build();
-List<Flight> filteredFlightList = flightsFilter.filter(flightList);
+List<Flight> filteredFlightList = flightsFilter.filter(hugeFlightList);
+filteredFlightList = flightsFilter.doSequential().filter(smallFlightList);
+filteredFlightList = flightsFilter.doParallel().filter(anotherHugeFlightList);
 ```
 ## Performance
 All filtering operations can be parallel by using `doParallel()` operator of `FlightsFilterBuilder`.
