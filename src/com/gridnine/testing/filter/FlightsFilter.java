@@ -148,7 +148,7 @@ public class FlightsFilter implements Filter<List<Flight>> {
     }
 
     @Override
-    public List<Flight> filtrate(final List<Flight> flightList) {
+    public List<Flight> filter(final List<Flight> flightList) {
         List<Flight> filteredFlights = new ArrayList<>(flightList);
         if (!arrivalStatementsMap.isEmpty())
             filteredFlights = conditionalFilter(filteredFlights, arrivalStatementsMap, FlightFilterType.ARRIVAL);
