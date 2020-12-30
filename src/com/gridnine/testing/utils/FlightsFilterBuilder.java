@@ -12,10 +12,11 @@ public class FlightsFilterBuilder {
     private final Map<FilterOperator, Long> idleStatementsMap = new EnumMap<>(FilterOperator.class);
     private Map<FilterOperator, Long> targetStatementsMap;
     private boolean allowInvalidFlights = true;
+    private boolean useParallelStream = false;
 
     public FlightsFilter eq(Long epochTime) {
         targetStatementsMap.put(FilterOperator.EQ, epochTime);
-        return new FlightsFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights);
+        return new FlightsFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights, useParallelStream);
     }
 
     public FlightsFilterBuilder gte(Long epochTime) {
@@ -58,11 +59,15 @@ public class FlightsFilterBuilder {
         targetStatementsMap = departureStatementsMap;
         return this;
     }
+    public FlightsFilterBuilder doParallel() {
+        this.useParallelStream = true;
+        return this;
+    }
 
     public FlightsFilter build() {
         if (allowInvalidFlights && arrivalStatementsMap.isEmpty() && departureStatementsMap.isEmpty() && idleStatementsMap.isEmpty())
             throw new NullPointerException("Wrong usage of FlightFilterBuilder");
-        return new FlightsFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights);
+        return new FlightsFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights, useParallelStream);
     }
 
 }

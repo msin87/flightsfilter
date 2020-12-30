@@ -85,10 +85,10 @@ public class FilterTest {
         long gtTime = threeDaysFromNowTime;
         FlightsFilter ltArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
         List<Flight> filteredFlights = ltArriveFilter.filtrate(flightList);
-        assertEquals(filteredFlights.size(), 3);
-        assertEquals(filteredFlights.get(0).getSegments().get(1).getArrivalDate(), flightList.get(1).getSegments().get(1).getArrivalDate());
-        assertEquals(filteredFlights.get(1).getSegments().get(1).getArrivalDate(), flightList.get(4).getSegments().get(1).getArrivalDate());
-        assertEquals(filteredFlights.get(2).getSegments().get(1).getArrivalDate(), flightList.get(5).getSegments().get(1).getArrivalDate());
+        assertEquals( 3,filteredFlights.size());
+        assertEquals(flightList.get(1).getSegments().get(1).getArrivalDate(),filteredFlights.get(0).getSegments().get(1).getArrivalDate());
+        assertEquals(flightList.get(4).getSegments().get(1).getArrivalDate(),filteredFlights.get(1).getSegments().get(1).getArrivalDate());
+        assertEquals(flightList.get(5).getSegments().get(1).getArrivalDate(),filteredFlights.get(2).getSegments().get(1).getArrivalDate());
         System.out.println("combineArriveFilterTest: " + filteredFlights);
 
         ltTime = threeDaysFromNowTime;
@@ -139,6 +139,26 @@ public class FilterTest {
         assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().lt(threeDaysFromNowTime).build());
         assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().build());
         assertDoesNotThrow(()->new FlightsFilterBuilder().arrival().gt(threeDaysFromNowTime).build());
+    }
+
+    @Test
+    void doInParallelTest(){
+        long ltTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
+        long gtTime = threeDaysFromNowTime;
+        FlightsFilter ltArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).doParallel().build();
+        List<Flight> filteredFlights = ltArriveFilter.filtrate(flightList);
+        assertEquals( 3,filteredFlights.size());
+        assertEquals(flightList.get(1).getSegments().get(1).getArrivalDate(),filteredFlights.get(0).getSegments().get(1).getArrivalDate());
+        assertEquals(flightList.get(4).getSegments().get(1).getArrivalDate(),filteredFlights.get(1).getSegments().get(1).getArrivalDate());
+        assertEquals(flightList.get(5).getSegments().get(1).getArrivalDate(),filteredFlights.get(2).getSegments().get(1).getArrivalDate());
+        System.out.println("combineArriveFilterTest: " + filteredFlights);
+
+        ltTime = threeDaysFromNowTime;
+        gtTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
+        FlightsFilter wrongArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
+        filteredFlights = wrongArriveFilter.filtrate(flightList);
+        assertTrue(filteredFlights.isEmpty());
+
     }
 
 }
