@@ -126,11 +126,19 @@ public class FilterTest {
         List<Flight> filteredFlights = flightFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(5));
     }
-    @Test void removeOnlyInvalidFlightsTest(){
+    @Test
+    void removeOnlyInvalidFlightsTest(){
         FlightFilter flightFilter = new FlightFilterBuilder().removeInvalidFlights().build();
         List<Flight> filteredFlightList = flightFilter.filtrate(flightList);
         assertFalse(filteredFlightList.contains(flightList.get(3)));
+    }
 
+    @Test
+    void wrongUsageFilterBuilderTest(){
+        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().gt(threeDaysFromNowTime).build());
+        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().lt(threeDaysFromNowTime).build());
+        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().build());
+        assertDoesNotThrow(()->new FlightFilterBuilder().arrival().gt(threeDaysFromNowTime).build());
     }
 
 }
