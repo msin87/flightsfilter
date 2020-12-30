@@ -17,6 +17,7 @@ public class FlightFilter implements Filter<List<Flight>> {
     private final Map<FilterOperator, Long> departureStatementsMap;
     private final Map<FilterOperator, Long> idleStatementsMap;
     private final boolean allowInvalidFlights;
+    private boolean invalidFlightsRemoved = false;
 
     public FlightFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights) {
         this.arrivalStatementsMap = arrivalStatementsMap;
@@ -53,7 +54,7 @@ public class FlightFilter implements Filter<List<Flight>> {
     }
 
     private boolean isValidSegment(Segment segment) {
-        if (!allowInvalidFlights) {
+        if (!(allowInvalidFlights || invalidFlightsRemoved)) {
             return segment.getArrivalDate().toEpochSecond(ZoneOffset.UTC) < segment.getDepartureDate().toEpochSecond(ZoneOffset.UTC);
         }
         return true;
@@ -61,7 +62,7 @@ public class FlightFilter implements Filter<List<Flight>> {
 
     private boolean isValidFlight(Flight flight) {
         boolean isValid = false;
-        if (allowInvalidFlights) {
+        if (allowInvalidFlights && invalidFlightsRemoved) {
             return true;
         }
         for (Segment segment : flight.getSegments()) {
@@ -116,6 +117,7 @@ public class FlightFilter implements Filter<List<Flight>> {
                                     isPassedSegment(segment, conditions.getValue(), conditions.getKey(), flightFilterType)))
                     .collect(Collectors.toList());
         }
+        invalidFlightsRemoved = true;
         return filteredList;
     }
 
@@ -133,11 +135,14 @@ public class FlightFilter implements Filter<List<Flight>> {
                     .filter(this::isValidFlight)
                     .collect(Collectors.toList());
         }
+        invalidFlightsRemoved = true;
         return filteredList;
     }
 
     private List<Flight> invalidFlightsFilter(List<Flight> flightList) {
-        return flightList.parallelStream().filter(flight -> flight.getSegments().stream().noneMatch(this::isValidSegment)).collect(Collectors.toList());
+        List<Flight> filteredList = flightList.parallelStream().filter(flight -> flight.getSegments().stream().noneMatch(this::isValidSegment)).collect(Collectors.toList());
+        invalidFlightsRemoved = true;
+        return filteredList;
     }
 
     @Override
