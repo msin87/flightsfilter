@@ -21,7 +21,7 @@ public class FilterTest {
     @Test
     public void arrivalEqFilterTest() {
         int[] resultId = {0, 1, 4, 5};
-        FlightsFilter eqFilter = new FlightsFilterBuilder().arrival().eq(threeDaysFromNowTime);
+        FlightsFilter eqFilter = new FlightsFilterBuilder().arrival().eq(threeDaysFromNowTime).build();
         List<Flight> filteredFlights = eqFilter.filtrate(flightList);
         assertEquals(resultId.length, filteredFlights.size());
         for (int i = 0; i < resultId.length; i++) {

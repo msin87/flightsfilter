@@ -14,9 +14,9 @@ public class FlightsFilterBuilder {
     private boolean allowInvalidFlights = true;
     private boolean useParallelStream = false;
 
-    public FlightsFilter eq(Long epochTime) {
+    public FlightsFilterBuilder eq(Long epochTime) {
         targetStatementsMap.put(FilterOperator.EQ, epochTime);
-        return new FlightsFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights, useParallelStream);
+        return this;
     }
 
     public FlightsFilterBuilder gte(Long epochTime) {
