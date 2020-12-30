@@ -1,10 +1,10 @@
-package com.gridline.testing;
+package com.gridnine.testing;
 
-import com.gridline.testing.db.FlightsDao;
-import com.gridline.testing.db.FlightsRepository;
-import com.gridline.testing.filter.FlightFilter;
-import com.gridline.testing.models.Flight;
-import com.gridline.testing.utils.FlightFilterBuilder;
+import com.gridnine.testing.db.FlightsDao;
+import com.gridnine.testing.db.FlightsRepository;
+import com.gridnine.testing.filter.FlightFilter;
+import com.gridnine.testing.models.Flight;
+import com.gridnine.testing.utils.FlightFilterBuilder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

@@ -1,7 +1,7 @@
 package tests;
 
-import com.gridline.testing.db.FlightsDao;
-import com.gridline.testing.db.FlightsRepository;
+import com.gridnine.testing.db.FlightsDao;
+import com.gridnine.testing.db.FlightsRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

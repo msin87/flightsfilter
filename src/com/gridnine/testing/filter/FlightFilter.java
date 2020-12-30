@@ -1,10 +1,10 @@
-package com.gridline.testing.filter;
+package com.gridnine.testing.filter;
 
-import com.gridline.testing.enums.FilterOperator;
-import com.gridline.testing.enums.FlightFilterType;
-import com.gridline.testing.interfaces.Filter;
-import com.gridline.testing.models.Flight;
-import com.gridline.testing.models.Segment;
+import com.gridnine.testing.enums.FilterOperator;
+import com.gridnine.testing.enums.FlightFilterType;
+import com.gridnine.testing.interfaces.Filter;
+import com.gridnine.testing.models.Flight;
+import com.gridnine.testing.models.Segment;
 
 import java.time.ZoneOffset;
 import java.util.ArrayList;

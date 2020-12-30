@@ -1,7 +1,7 @@
-package com.gridline.testing.db;
+package com.gridnine.testing.db;
 
-import com.gridline.testing.models.Flight;
-import com.gridline.testing.utils.FlightBuilder;
+import com.gridnine.testing.models.Flight;
+import com.gridnine.testing.utils.FlightBuilder;
 
 import java.util.List;
 
