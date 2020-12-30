@@ -20,7 +20,7 @@ public class FilterTest {
     @Test
     public void arrivalEqFilterTest() {
         int[] resultId = {0, 1, 4, 5};
-        FlightFilter eqFilter = new FlightFilterBuilder().arrival().onlyFilteredSegments().eq(threeDaysFromNowTime);
+        FlightFilter eqFilter = new FlightFilterBuilder().arrival().eq(threeDaysFromNowTime);
         List<Flight> filteredFlights = eqFilter.filtrate(flightList);
         assertEquals(resultId.length, filteredFlights.size());
         for (int i = 0; i < resultId.length; i++) {
@@ -92,7 +92,7 @@ public class FilterTest {
 
         ltTime = threeDaysFromNowTime;
         gtTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
-        FlightFilter wrongArriveFilter = new FlightFilterBuilder().arrival().onlyFilteredSegments().lt(ltTime).gt(gtTime).build();
+        FlightFilter wrongArriveFilter = new FlightFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
         filteredFlights = wrongArriveFilter.filtrate(flightList);
         assertTrue(filteredFlights.isEmpty());
     }

@@ -1,7 +1,6 @@
 package com.gridline.testing.filter;
 
 import com.gridline.testing.enums.FilterOperator;
-import com.gridline.testing.enums.FlightFilterBehavior;
 import com.gridline.testing.enums.FlightFilterType;
 import com.gridline.testing.interfaces.Filter;
 import com.gridline.testing.models.Flight;
@@ -10,21 +9,20 @@ import com.gridline.testing.models.Segment;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FlightFilter implements Filter<List<Flight>> {
     private final Map<FilterOperator, Long> arrivalStatementsMap;
     private final Map<FilterOperator, Long> departureStatementsMap;
     private final Map<FilterOperator, Long> idleStatementsMap;
-    private final FlightFilterBehavior behavior;
-    private boolean allowInvalidFlights;
+    private final boolean allowInvalidFlights;
 
-    public FlightFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, FlightFilterBehavior behavior, boolean allowInvalidFlights) {
+    public FlightFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights) {
         this.arrivalStatementsMap = arrivalStatementsMap;
         this.departureStatementsMap = departureStatementsMap;
         this.idleStatementsMap = idleStatementsMap;
         this.allowInvalidFlights = allowInvalidFlights;
-        this.behavior = behavior;
     }
 
     private long getSegmentEpochByType(Segment segment, FlightFilterType flightFilterType) {
@@ -54,20 +52,31 @@ public class FlightFilter implements Filter<List<Flight>> {
         }
     }
 
-    private boolean isInvalidSegment(Segment segment) {
+    private boolean isValidSegment(Segment segment) {
         if (!allowInvalidFlights) {
             return segment.getArrivalDate().toEpochSecond(ZoneOffset.UTC) < segment.getDepartureDate().toEpochSecond(ZoneOffset.UTC);
         }
-        return false;
+        return true;
+    }
+
+    private boolean isValidFlight(Flight flight) {
+        boolean isValid = false;
+        if (allowInvalidFlights) {
+            return true;
+        }
+        for (Segment segment : flight.getSegments()) {
+            isValid |= isValidSegment(segment);
+        }
+        return isValid;
     }
 
     private boolean isPassedSegment(Segment segment, Long epochTimeToCompare, FilterOperator filterOperator, FlightFilterType filterType) {
-        if (isInvalidSegment(segment))
+        if (!isValidSegment(segment))
             return false;
         return filterStatementResult(segment, epochTimeToCompare, filterOperator, filterType);
     }
 
-    private boolean isPassedSegmentDiff(long diffEpochTime, long toleranceSeconds, FilterOperator filterOperator) {
+    private boolean isAllowedSegmentDiff(long diffEpochTime, long toleranceSeconds, FilterOperator filterOperator) {
         switch (filterOperator) {
             case EQ:
                 return diffEpochTime == toleranceSeconds;
@@ -84,30 +93,28 @@ public class FlightFilter implements Filter<List<Flight>> {
         }
     }
 
+    private boolean isAllowedFlightIdleTime(Flight flight, long toleranceSeconds, FilterOperator filterOperator) {
+        boolean isPassed = false;
+        List<Segment> segmentList = flight.getSegments();
+        for (int nextSegmentIndex = 1; nextSegmentIndex <= (segmentList.size() - 1); nextSegmentIndex++) {
+            Segment currentSegment = segmentList.get(nextSegmentIndex - 1);
+            Segment nextSegment = segmentList.get(nextSegmentIndex);
+            long currentArrivalEpoch = currentSegment.getArrivalDate().toEpochSecond(ZoneOffset.UTC);
+            long nextDepartureEpoch = nextSegment.getDepartureDate().toEpochSecond(ZoneOffset.UTC);
+            isPassed |= (isAllowedSegmentDiff(nextDepartureEpoch - currentArrivalEpoch, toleranceSeconds, filterOperator));
+        }
+        return isPassed;
+    }
+
     private List<Flight> conditionalFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap, FlightFilterType flightFilterType) {
         List<Flight> filteredList = new ArrayList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {
             Stream<Flight> flightsStream = filteredList.parallelStream();
-            switch (behavior) {
-                case GET_ONLY_FILTERED_SEGMENTS:
-                    filteredList = flightsStream.filter(flight ->
-                            flight.getSegments().stream().
-                                    anyMatch(segment ->
-                                            isPassedSegment(segment, conditions.getValue(), conditions.getKey(), flightFilterType)))
-                            .map(flight -> new Flight(flight.getSegments().stream()
-                                    .filter(segment -> isPassedSegment(segment, conditions.getValue(), conditions.getKey(), flightFilterType)).collect(Collectors.toList())))
-                            .collect(Collectors.toList());
-                    break;
-                case GET_ALL_SEGMENTS:
-                    filteredList = flightsStream.filter(flight ->
-                            flight.getSegments().stream().
-                                    anyMatch(segment ->
-                                            isPassedSegment(segment, conditions.getValue(), conditions.getKey(), flightFilterType)))
-                            .collect(Collectors.toList());
-                    break;
-                default:
-                    return Collections.emptyList();
-            }
+            filteredList = flightsStream.filter(flight ->
+                    flight.getSegments().stream().
+                            anyMatch(segment ->
+                                    isPassedSegment(segment, conditions.getValue(), conditions.getKey(), flightFilterType)))
+                    .collect(Collectors.toList());
         }
         return filteredList;
     }
@@ -121,40 +128,16 @@ public class FlightFilter implements Filter<List<Flight>> {
         List<Flight> filteredList = new LinkedList<>(flightList);
         for (Map.Entry<FilterOperator, Long> conditions : conditionMap.entrySet()) {
             long toleranceSeconds = conditions.getValue();
-            flightLoop:
-            for (int i = 0; i < flightList.size(); i++) {
-                boolean testPassed = false;
-                Flight flight = flightList.get(i);
-                List<Segment> segmentList = new ArrayList<>(flight.getSegments());
-                if (segmentList.size() < 2) {
-                    //noinspection SuspiciousListRemoveInLoop
-                    filteredList.remove(flightList.get(i));
-                    continue;
-                }
-                if (!allowInvalidFlights) {
-                    for (Segment segment : flight.getSegments()) {
-                        if (isInvalidSegment(segment))
-                            filteredList.remove(flightList.get(i));
-                        continue flightLoop;
-                    }
-                }
-                for (int nextSegmentIndex = 1; nextSegmentIndex <= (segmentList.size() - 1); nextSegmentIndex++) {
-                    Segment currentSegment = segmentList.get(nextSegmentIndex - 1);
-                    Segment nextSegment = segmentList.get(nextSegmentIndex);
-                    long currentArrivalEpoch = currentSegment.getArrivalDate().toEpochSecond(ZoneOffset.UTC);
-                    long nextDepartureEpoch = nextSegment.getDepartureDate().toEpochSecond(ZoneOffset.UTC);
-                    testPassed |= isPassedSegmentDiff(nextDepartureEpoch - currentArrivalEpoch, toleranceSeconds, conditions.getKey());
-                }
-                if (!testPassed)
-                    //noinspection SuspiciousListRemoveInLoop
-                    filteredList.remove(flightList.get(i));
-            }
+            filteredList = filteredList.stream()
+                    .filter(flight -> isAllowedFlightIdleTime(flight, toleranceSeconds, conditions.getKey()))
+                    .filter(this::isValidFlight)
+                    .collect(Collectors.toList());
         }
         return filteredList;
     }
 
     private List<Flight> invalidFlightsFilter(List<Flight> flightList) {
-        return flightList.parallelStream().filter(flight -> flight.getSegments().stream().noneMatch(this::isInvalidSegment)).collect(Collectors.toList());
+        return flightList.parallelStream().filter(flight -> flight.getSegments().stream().noneMatch(this::isValidSegment)).collect(Collectors.toList());
     }
 
     @Override

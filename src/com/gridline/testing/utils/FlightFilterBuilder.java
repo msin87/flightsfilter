@@ -13,7 +13,6 @@ public class FlightFilterBuilder {
     private final Map<FilterOperator, Long> idleStatementsMap = new EnumMap<>(FilterOperator.class);
     private Map<FilterOperator, Long> targetStatementsMap;
     private boolean allowInvalidFlights = true;
-    private FlightFilterBehavior behavior = FlightFilterBehavior.GET_ALL_SEGMENTS;
 
     public static long hoursToSeconds(int hours) {
         return hours * 60 * 60L;
@@ -24,7 +23,7 @@ public class FlightFilterBuilder {
 
     public FlightFilter eq(Long epochTime) {
         targetStatementsMap.put(FilterOperator.EQ, epochTime);
-        return new FlightFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, behavior, allowInvalidFlights);
+        return new FlightFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights);
     }
 
     public FlightFilterBuilder gte(Long epochTime) {
@@ -52,10 +51,6 @@ public class FlightFilterBuilder {
         return this;
     }
 
-    public FlightFilterBuilder onlyFilteredSegments() {
-        this.behavior = FlightFilterBehavior.GET_ONLY_FILTERED_SEGMENTS;
-        return this;
-    }
 
     public FlightFilterBuilder removeInvalidFlights() {
         allowInvalidFlights = false;
@@ -73,7 +68,7 @@ public class FlightFilterBuilder {
     }
 
     public FlightFilter build() {
-        return new FlightFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, behavior, allowInvalidFlights);
+        return new FlightFilter(arrivalStatementsMap, departureStatementsMap, idleStatementsMap, allowInvalidFlights);
     }
 
 }
