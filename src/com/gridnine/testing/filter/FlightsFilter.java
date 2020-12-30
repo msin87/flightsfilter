@@ -7,7 +7,9 @@ import com.gridnine.testing.models.Flight;
 import com.gridnine.testing.models.Segment;
 
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -123,7 +125,7 @@ public class FlightsFilter implements Filter<List<Flight>> {
                     .collect(Collectors.toList());
         }
         invalidFlightsRemoved = true;
-        return Objects.requireNonNullElse(filteredList, Collections.emptyList());
+        return filteredList;
     }
 
     private List<Flight> idleFlightsFilter(List<Flight> flightList, Map<FilterOperator, Long> conditionMap) {
@@ -136,7 +138,7 @@ public class FlightsFilter implements Filter<List<Flight>> {
                     .collect(Collectors.toList());
         }
         invalidFlightsRemoved = true;
-        return Objects.requireNonNullElse(filteredList, Collections.emptyList());
+        return filteredList;
     }
 
     private List<Flight> invalidFlightsFilter(List<Flight> flightList) {
