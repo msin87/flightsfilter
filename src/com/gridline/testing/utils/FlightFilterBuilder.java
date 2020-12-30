@@ -1,7 +1,6 @@
 package com.gridline.testing.utils;
 
 import com.gridline.testing.enums.FilterOperator;
-import com.gridline.testing.enums.FlightFilterBehavior;
 import com.gridline.testing.filter.FlightFilter;
 
 import java.util.EnumMap;
