@@ -2,9 +2,9 @@ package com.gridnine.testing;
 
 import com.gridnine.testing.db.FlightsDao;
 import com.gridnine.testing.db.FlightsRepository;
-import com.gridnine.testing.filter.FlightFilter;
+import com.gridnine.testing.filter.FlightsFilter;
 import com.gridnine.testing.models.Flight;
-import com.gridnine.testing.utils.FlightFilterBuilder;
+import com.gridnine.testing.utils.FlightsFilterBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,9 +20,9 @@ public class Main {
     public static void main(String[] args) {
         long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         List<Flight> flightList = FlightsDao.getInstance(new FlightsRepository()).getAll();
-        FlightFilter currentTimeFlightsFilter = new FlightFilterBuilder().departure().lt(currentEpoch).build();
-        FlightFilter invalidFlightsFilter = new FlightFilterBuilder().removeInvalidFlights().build();
-        FlightFilter idleFlightsFilter = new FlightFilterBuilder().idle().gt(Duration.ofHours(2).toSeconds()).build();
+        FlightsFilter currentTimeFlightsFilter = new FlightsFilterBuilder().departure().lt(currentEpoch).build();
+        FlightsFilter invalidFlightsFilter = new FlightsFilterBuilder().removeInvalidFlights().build();
+        FlightsFilter idleFlightsFilter = new FlightsFilterBuilder().idle().gt(Duration.ofHours(2).toSeconds()).build();
         System.out.println("[Текущее время: " + LocalDateTime.now() + "]");
         System.out.println("--------------------------------Все вылеты--------------------------------\r\n" + listToString(flightList));
         System.out.println("--------------------Вылеты до текущего момента времени--------------------\r\n" + listToString(currentTimeFlightsFilter.filtrate(flightList)));

@@ -14,14 +14,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FlightFilter implements Filter<List<Flight>> {
+public class FlightsFilter implements Filter<List<Flight>> {
     private final Map<FilterOperator, Long> arrivalStatementsMap;
     private final Map<FilterOperator, Long> departureStatementsMap;
     private final Map<FilterOperator, Long> idleStatementsMap;
     private final boolean allowInvalidFlights;
     private boolean invalidFlightsRemoved = false;
 
-    public FlightFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights) {
+    public FlightsFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights) {
         this.arrivalStatementsMap = arrivalStatementsMap;
         this.departureStatementsMap = departureStatementsMap;
         this.idleStatementsMap = idleStatementsMap;

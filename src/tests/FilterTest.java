@@ -1,10 +1,10 @@
 package tests;
 
 import com.gridnine.testing.models.Flight;
-import com.gridnine.testing.filter.FlightFilter;
+import com.gridnine.testing.filter.FlightsFilter;
 import com.gridnine.testing.db.FlightsDao;
 import com.gridnine.testing.db.FlightsRepository;
-import com.gridnine.testing.utils.FlightFilterBuilder;
+import com.gridnine.testing.utils.FlightsFilterBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -21,7 +21,7 @@ public class FilterTest {
     @Test
     public void arrivalEqFilterTest() {
         int[] resultId = {0, 1, 4, 5};
-        FlightFilter eqFilter = new FlightFilterBuilder().arrival().eq(threeDaysFromNowTime);
+        FlightsFilter eqFilter = new FlightsFilterBuilder().arrival().eq(threeDaysFromNowTime);
         List<Flight> filteredFlights = eqFilter.filtrate(flightList);
         assertEquals(resultId.length, filteredFlights.size());
         for (int i = 0; i < resultId.length; i++) {
@@ -33,7 +33,7 @@ public class FilterTest {
     @Test
     public void arrivalGteFilterTest() {
         int[] resultId = {0, 1, 4, 5};
-        FlightFilter gteFilter = new FlightFilterBuilder().arrival().gte(threeDaysFromNowTime).build();
+        FlightsFilter gteFilter = new FlightsFilterBuilder().arrival().gte(threeDaysFromNowTime).build();
         List<Flight> filteredFlights = gteFilter.filtrate(flightList);
         assertEquals(filteredFlights.size(), resultId.length);
         for (int i = 0; i < resultId.length; i++) {
@@ -45,7 +45,7 @@ public class FilterTest {
     @Test
     public void arrivalGtFilterTest() {
         int[] resultId = {1, 4, 5};
-        FlightFilter gtFilter = new FlightFilterBuilder().arrival().gt(threeDaysFromNowTime).build();
+        FlightsFilter gtFilter = new FlightsFilterBuilder().arrival().gt(threeDaysFromNowTime).build();
         List<Flight> filteredFlights = gtFilter.filtrate(flightList);
         assertEquals(filteredFlights.size(), resultId.length);
         for (int i = 0; i < resultId.length; i++) {
@@ -57,7 +57,7 @@ public class FilterTest {
     @Test
     public void arrivalLtFilterTest() {
         int[] resultId = {2, 3};
-        FlightFilter ltFilter = new FlightFilterBuilder().arrival().lt(threeDaysFromNowTime).build();
+        FlightsFilter ltFilter = new FlightsFilterBuilder().arrival().lt(threeDaysFromNowTime).build();
         List<Flight> filteredFlights = ltFilter.filtrate(flightList);
         assertEquals(filteredFlights.size(), resultId.length);
         for (int i = 0; i < resultId.length; i++) {
@@ -70,7 +70,7 @@ public class FilterTest {
     public void arrivalLteFilterTest() {
         int[] resultId = {0, 1, 2, 3, 4, 5};
 
-        FlightFilter ltFilter = new FlightFilterBuilder().arrival().lte(threeDaysFromNowTime).build();
+        FlightsFilter ltFilter = new FlightsFilterBuilder().arrival().lte(threeDaysFromNowTime).build();
         List<Flight> filteredFlights = ltFilter.filtrate(flightList);
         assertEquals(filteredFlights.size(), resultId.length);
         for (int i = 0; i < resultId.length; i++) {
@@ -83,7 +83,7 @@ public class FilterTest {
     public void combineArriveFilterTest() {
         long ltTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
         long gtTime = threeDaysFromNowTime;
-        FlightFilter ltArriveFilter = new FlightFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
+        FlightsFilter ltArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
         List<Flight> filteredFlights = ltArriveFilter.filtrate(flightList);
         assertEquals(filteredFlights.size(), 3);
         assertEquals(filteredFlights.get(0).getSegments().get(1).getArrivalDate(), flightList.get(1).getSegments().get(1).getArrivalDate());
@@ -93,7 +93,7 @@ public class FilterTest {
 
         ltTime = threeDaysFromNowTime;
         gtTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
-        FlightFilter wrongArriveFilter = new FlightFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
+        FlightsFilter wrongArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
         filteredFlights = wrongArriveFilter.filtrate(flightList);
         assertTrue(filteredFlights.isEmpty());
     }
@@ -101,16 +101,16 @@ public class FilterTest {
     @Test
     public void idleFilterTest() {
         long gteHours = Duration.ofHours(2).toSeconds();
-        FlightFilter flightFilter = new FlightFilterBuilder().idle().gte(gteHours).build();
-        List<Flight> filteredFlights = flightFilter.filtrate(flightList);
+        FlightsFilter flightsFilter = new FlightsFilterBuilder().idle().gte(gteHours).build();
+        List<Flight> filteredFlights = flightsFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(4));
         assertEquals(filteredFlights.get(1), flightList.get(5));
         System.out.println("combineArriveDepartureFilterTest gte=2: " + filteredFlights);
 
         gteHours = Duration.ofHours(1).toSeconds();
         long ltHours = Duration.ofHours(3).toSeconds();
-        flightFilter = new FlightFilterBuilder().idle().gt(gteHours).lt(ltHours).build();
-        filteredFlights = flightFilter.filtrate(flightList);
+        flightsFilter = new FlightsFilterBuilder().idle().gt(gteHours).lt(ltHours).build();
+        filteredFlights = flightsFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(5));
         System.out.println("combineArriveDepartureFilterTest gte=1, lt=3: " + filteredFlights);
     }
@@ -118,27 +118,27 @@ public class FilterTest {
     @Test
     public void combineArriveDepartureTest() {
         long iddleGteTime = Duration.ofHours(2).toSeconds();
-        FlightFilter flightFilter = new FlightFilterBuilder()
+        FlightsFilter flightsFilter = new FlightsFilterBuilder()
                 .departure().gte(threeDaysFromNowTime + Duration.ofHours(2).toSeconds()).lt(threeDaysFromNowTime + Duration.ofHours(6).toSeconds())
                 .arrival().gt(threeDaysFromNowTime + Duration.ofHours(4).toSeconds())
                 .idle().gte(iddleGteTime)
                 .build();
-        List<Flight> filteredFlights = flightFilter.filtrate(flightList);
+        List<Flight> filteredFlights = flightsFilter.filtrate(flightList);
         assertEquals(filteredFlights.get(0), flightList.get(5));
     }
     @Test
     void removeOnlyInvalidFlightsTest(){
-        FlightFilter flightFilter = new FlightFilterBuilder().removeInvalidFlights().build();
-        List<Flight> filteredFlightList = flightFilter.filtrate(flightList);
+        FlightsFilter flightsFilter = new FlightsFilterBuilder().removeInvalidFlights().build();
+        List<Flight> filteredFlightList = flightsFilter.filtrate(flightList);
         assertFalse(filteredFlightList.contains(flightList.get(3)));
     }
 
     @Test
     void wrongUsageFilterBuilderTest(){
-        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().gt(threeDaysFromNowTime).build());
-        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().lt(threeDaysFromNowTime).build());
-        assertThrows(NullPointerException.class,()->new FlightFilterBuilder().build());
-        assertDoesNotThrow(()->new FlightFilterBuilder().arrival().gt(threeDaysFromNowTime).build());
+        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().gt(threeDaysFromNowTime).build());
+        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().lt(threeDaysFromNowTime).build());
+        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().build());
+        assertDoesNotThrow(()->new FlightsFilterBuilder().arrival().gt(threeDaysFromNowTime).build());
     }
 
 }
