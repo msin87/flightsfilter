@@ -147,6 +147,14 @@ public class FlightsFilter implements Filter<List<Flight>> {
         return filteredList;
     }
 
+    public void doParallel() {
+        this.useParallelStream = true;
+    }
+
+    public void doSequential() {
+        this.useParallelStream = false;
+    }
+
     @Override
     public List<Flight> filter(final List<Flight> flightList) {
         List<Flight> filteredFlights = new ArrayList<>(flightList);

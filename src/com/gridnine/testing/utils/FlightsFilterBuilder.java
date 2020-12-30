@@ -64,6 +64,7 @@ public class FlightsFilterBuilder {
         return this;
     }
 
+
     public FlightsFilter build() {
         if (allowInvalidFlights && arrivalStatementsMap.isEmpty() && departureStatementsMap.isEmpty() && idleStatementsMap.isEmpty())
             throw new NullPointerException("Wrong usage of FlightFilterBuilder");
