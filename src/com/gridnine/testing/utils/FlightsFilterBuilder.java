@@ -14,27 +14,27 @@ public class FlightsFilterBuilder {
     private boolean allowInvalidFlights = true;
     private boolean useParallelStream = false;
 
-    public FlightsFilterBuilder eq(Long epochTime) {
+    public FlightsFilterBuilder eq(long epochTime) {
         targetStatementsMap.put(FilterOperator.EQ, epochTime);
         return this;
     }
 
-    public FlightsFilterBuilder gte(Long epochTime) {
+    public FlightsFilterBuilder gte(long epochTime) {
         targetStatementsMap.put(FilterOperator.GTE, epochTime);
         return this;
     }
 
-    public FlightsFilterBuilder gt(Long epochTime) {
+    public FlightsFilterBuilder gt(long epochTime) {
         targetStatementsMap.put(FilterOperator.GT, epochTime);
         return this;
     }
 
-    public FlightsFilterBuilder lt(Long epochTime) {
+    public FlightsFilterBuilder lt(long epochTime) {
         targetStatementsMap.put(FilterOperator.LT, epochTime);
         return this;
     }
 
-    public FlightsFilterBuilder lte(Long epochTime) {
+    public FlightsFilterBuilder lte(long epochTime) {
         targetStatementsMap.put(FilterOperator.LTE, epochTime);
         return this;
     }

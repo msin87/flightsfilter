@@ -76,7 +76,7 @@ public class FlightsFilter implements Filter<List<Flight>> {
         return isValid;
     }
 
-    private boolean isPassedSegment(Segment segment, Long epochTimeToCompare, FilterOperator filterOperator, FlightFilterType filterType) {
+    private boolean isPassedSegment(Segment segment, long epochTimeToCompare, FilterOperator filterOperator, FlightFilterType filterType) {
         if (!isValidSegment(segment))
             return false;
         return filterStatementResult(segment, epochTimeToCompare, filterOperator, filterType);
