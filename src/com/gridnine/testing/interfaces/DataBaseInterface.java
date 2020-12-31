@@ -1,4 +1,4 @@
-package com.gridnine.testing.db;
+package com.gridnine.testing.interfaces;
 
 import java.util.List;
 

@@ -135,9 +135,9 @@ public class FilterTest {
 
     @Test
     void wrongUsageFilterBuilderTest(){
-        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().gt(threeDaysFromNowTime).build());
-        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().lt(threeDaysFromNowTime).build());
-        assertThrows(NullPointerException.class,()->new FlightsFilterBuilder().build());
+        assertThrows(IllegalStateException.class,()->new FlightsFilterBuilder().gt(threeDaysFromNowTime).build());
+        assertThrows(IllegalStateException.class,()->new FlightsFilterBuilder().lt(threeDaysFromNowTime).build());
+        assertThrows(IllegalStateException.class,()->new FlightsFilterBuilder().build());
         assertDoesNotThrow(()->new FlightsFilterBuilder().arrival().gt(threeDaysFromNowTime).build());
     }
 

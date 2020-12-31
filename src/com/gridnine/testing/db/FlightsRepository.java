@@ -1,5 +1,6 @@
 package com.gridnine.testing.db;
 
+import com.gridnine.testing.interfaces.DataBaseInterface;
 import com.gridnine.testing.models.Flight;
 import com.gridnine.testing.utils.FlightBuilder;
 
