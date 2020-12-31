@@ -6,7 +6,6 @@ FlightsFilter flightsFilter = new FlightsFilterBuilder()
     .departure().eq(departureEqEpochTime)
     .idle().gt(gtIddleTime)
     .removeInvalidFlights()
-    .doParallel()
     .build();
 List<Flight> filteredFlightList = flightsFilter.filter(hugeFlightList);
 filteredFlightList = flightsFilter.doSequential().filter(smallFlightList);
