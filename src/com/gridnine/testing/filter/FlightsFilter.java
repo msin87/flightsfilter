@@ -11,20 +11,35 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Flights filter. Created based on condition sets. There are only three sets of conditions:
+ * <code>arrivalStatementsMap</code> - set of conditions for arrival times,
+ * <code>departureStatementsMap</code> - set of conditions for departure times,
+ * <code>idleStatementsMap</code> - set of conditions for downtime on the ground.
+ * Parameter <code>allowInvalidFlights</code> allows to exclude from the result flights in which there are segments
+ * with an arrival time before departure time.
+ * Operators <code>doParallel()</code> and <code>doSequential</code> allow to switch the filter on the use of parallel
+ * or sequential flow streams for faster performance depending on the amount of data received at the filter input.
+ */
 public class FlightsFilter implements Filter<List<Flight>> {
     private final Map<FilterOperator, Long> arrivalStatementsMap;
     private final Map<FilterOperator, Long> departureStatementsMap;
     private final Map<FilterOperator, Long> idleStatementsMap;
     private final boolean allowInvalidFlights;
+    private boolean useParallelStream = false;
     private boolean invalidFlightsRemoved = false;
-    private boolean useParallelStream;
 
-    public FlightsFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights, boolean useParallelStream) {
+    /**
+     * @param arrivalStatementsMap   set of conditions for arrival times
+     * @param departureStatementsMap set of conditions for departure times
+     * @param idleStatementsMap      set of conditions for downtime on the ground
+     * @param allowInvalidFlights    allows to exclude from the result invalid flights (departureTime < arrivalTime)
+     */
+    public FlightsFilter(Map<FilterOperator, Long> arrivalStatementsMap, Map<FilterOperator, Long> departureStatementsMap, Map<FilterOperator, Long> idleStatementsMap, boolean allowInvalidFlights) {
         this.arrivalStatementsMap = arrivalStatementsMap;
         this.departureStatementsMap = departureStatementsMap;
         this.idleStatementsMap = idleStatementsMap;
         this.allowInvalidFlights = allowInvalidFlights;
-        this.useParallelStream = useParallelStream;
     }
 
     private Stream<Flight> getFlightStream(List<Flight> flightList) {
@@ -147,16 +162,32 @@ public class FlightsFilter implements Filter<List<Flight>> {
         return filteredList;
     }
 
+    /**
+     * Switching the filter to use parallel streams.
+     *
+     * @return this
+     */
     public FlightsFilter doParallel() {
         this.useParallelStream = true;
         return this;
     }
 
+    /**
+     * Switching the filter to use sequential streams.
+     *
+     * @return this
+     */
     public FlightsFilter doSequential() {
         this.useParallelStream = false;
         return this;
     }
 
+    /**
+     * Filters the input flight list and returns the filtered list.
+     *
+     * @param flightList input data
+     * @return
+     */
     @Override
     public List<Flight> filter(final List<Flight> flightList) {
         List<Flight> filteredFlights = new ArrayList<>(flightList);

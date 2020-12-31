@@ -145,8 +145,8 @@ public class FilterTest {
     void doInParallelTest(){
         long ltTime = LocalDateTime.ofEpochSecond(threeDaysFromNowTime, 0, ZoneOffset.UTC).plusHours(5).toEpochSecond(ZoneOffset.UTC);
         long gtTime = threeDaysFromNowTime;
-        FlightsFilter ltArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).doParallel().build();
-        List<Flight> filteredFlights = ltArriveFilter.filter(flightList);
+        FlightsFilter ltArriveFilter = new FlightsFilterBuilder().arrival().lt(ltTime).gt(gtTime).build();
+        List<Flight> filteredFlights = ltArriveFilter.doParallel().filter(flightList);
         assertEquals( 3,filteredFlights.size());
         assertEquals(flightList.get(1).getSegments().get(1).getArrivalDate(),filteredFlights.get(0).getSegments().get(1).getArrivalDate());
         assertEquals(flightList.get(4).getSegments().get(1).getArrivalDate(),filteredFlights.get(1).getSegments().get(1).getArrivalDate());
